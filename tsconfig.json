@@ -1,0 +1,41 @@
+{
+  // expo/tsconfig.base is available after `npm install`.
+  // All critical options are spelled out below so `tsc` is valid
+  // even before node_modules exists (e.g. in CI or fresh clone).
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    // ── Language ───────────────────────────────────────────────
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    // ── Module ─────────────────────────────────────────────────
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    // ── JSX ────────────────────────────────────────────────────
+    "jsx": "react-native",
+    // ── Output ─────────────────────────────────────────────────
+    "noEmit": true,
+    "skipLibCheck": true,
+    // ── Strictness ─────────────────────────────────────────────
+    "strict": true,
+    // ── Path aliases ───────────────────────────────────────────
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.d.ts",
+    "expo-env.d.ts",
+    "nativewind-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "web-build"
+  ]
+}

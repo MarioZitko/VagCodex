@@ -1,0 +1,37 @@
+# ── Dependencies ──────────────────────────────────────────────────────────────
+node_modules/
+
+# ── Expo ──────────────────────────────────────────────────────────────────────
+.expo/
+dist/
+web-build/
+expo-env.d.ts        # auto-generated; see expo-env.d.ts comment inside
+
+# ── Native directories (CNG / Continuous Native Generation) ───────────────────
+# Uncomment these two lines if you regenerate ios/ and android/ via
+# `npx expo prebuild` in CI rather than committing them.
+# ios/
+# android/
+
+# ── Credentials — NEVER commit these ──────────────────────────────────────────
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+google-services.json
+GoogleService-Info.plist
+
+# ── Environment variables ──────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example        # allow a committed example/template file
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# ── Misc ──────────────────────────────────────────────────────────────────────
+*.orig.*             # Metro / git merge conflict originals
+.DS_Store
