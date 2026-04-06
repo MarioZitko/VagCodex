@@ -1,16 +1,24 @@
-/**
- * Image picker service
- *
- * Wraps expo-image-picker for both camera capture and library selection.
- * Implementation will be added in a later iteration.
- */
-
-import type { CapturedImage } from "@/types";
+import * as ImagePicker from 'expo-image-picker';
+import type { CapturedImage } from '@/types';
 
 export async function captureFromCamera(): Promise<CapturedImage | null> {
-  throw new Error("Not implemented");
+  const { status } = await ImagePicker.requestCameraPermissionsAsync();
+  if (status !== 'granted') return null;
+
+  const result = await ImagePicker.launchCameraAsync({ quality: 0.9 });
+  if (result.canceled) return null;
+
+  const { uri, width, height, mimeType } = result.assets[0];
+  return { uri, width, height, mimeType };
 }
 
 export async function pickFromLibrary(): Promise<CapturedImage | null> {
-  throw new Error("Not implemented");
+  const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  if (status !== 'granted') return null;
+
+  const result = await ImagePicker.launchImageLibraryAsync({ quality: 0.9 });
+  if (result.canceled) return null;
+
+  const { uri, width, height, mimeType } = result.assets[0];
+  return { uri, width, height, mimeType };
 }

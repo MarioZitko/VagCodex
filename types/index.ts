@@ -1,55 +1,64 @@
 // ---------------------------------------------------------------------------
-// Image capture
+// PR Code database
+// ---------------------------------------------------------------------------
+
+export interface PRCode {
+  code: string;
+  description: string;
+  category: PRCategory;
+  group?: string;
+}
+
+export type PRCategory =
+  | 'engine'
+  | 'transmission'
+  | 'exterior'
+  | 'wheels'
+  | 'interior'
+  | 'safety'
+  | 'suspension'
+  | 'lighting'
+  | 'comfort'
+  | 'towing'
+  | 'other';
+
+// ---------------------------------------------------------------------------
+// Decoder
+// ---------------------------------------------------------------------------
+
+export interface DecodeResult {
+  matched: PRCode[];
+  unrecognized: string[];
+}
+
+// ---------------------------------------------------------------------------
+// Garage
+// ---------------------------------------------------------------------------
+
+export interface Vehicle {
+  id: string;
+  nickname?: string;
+  vin?: string;
+  prCodes: string[];
+  decodedAt: string; // ISO
+}
+
+// ---------------------------------------------------------------------------
+// Image capture (Phase 2+)
 // ---------------------------------------------------------------------------
 
 export interface CapturedImage {
   uri: string;
   width: number;
   height: number;
-  /** MIME type, e.g. "image/jpeg" */
   mimeType?: string;
 }
 
 // ---------------------------------------------------------------------------
-// OCR / text recognition
+// OCR (Phase 3+)
 // ---------------------------------------------------------------------------
-
-export interface RecognizedBlock {
-  text: string;
-  /** Bounding box corners, if provided by the ML Kit engine */
-  boundingBox?: BoundingBox;
-}
-
-export interface BoundingBox {
-  top: number;
-  left: number;
-  bottom: number;
-  right: number;
-}
 
 export interface OcrResult {
   rawText: string;
-  blocks: RecognizedBlock[];
-}
-
-// ---------------------------------------------------------------------------
-// Decoder
-// ---------------------------------------------------------------------------
-
-export type DecoderStatus = "idle" | "capturing" | "processing" | "done" | "error";
-
-export interface DecodeResult {
-  /** The structured data extracted after decoding */
-  payload: Record<string, unknown>;
-  rawText: string;
-  capturedAt: Date;
-}
-
-// ---------------------------------------------------------------------------
-// App-wide errors
-// ---------------------------------------------------------------------------
-
-export interface AppError {
-  code: string;
-  message: string;
+  blocks: Array<{ text: string }>;
 }
