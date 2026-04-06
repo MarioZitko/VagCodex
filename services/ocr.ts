@@ -1,9 +1,8 @@
 /**
  * OCR service
  *
- * Uses @react-native-ml-kit/text-recognition.
+ * Will use @react-native-ml-kit/text-recognition (add back to package.json when implementing).
  * Requires a custom dev build — NOT compatible with Expo Go.
- * Implementation will be added in a later iteration.
  */
 
 import type { OcrResult } from "@/types";
