@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import type { Href } from 'expo-router';
 import { useState } from 'react';
 import { extractPRCodesFromText } from '@/utils/prCodeParser';
 import { useDecodeStore } from '@/store/decodeStore';
@@ -20,8 +21,7 @@ export default function HomeScreen() {
   const handleContinue = () => {
     const codes = extractPRCodesFromText(inputText);
     setPendingCodes(codes);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    router.push('/decode/confirm' as any);
+    router.push('/decode/confirm' as Href);
   };
 
   const hasInput = inputText.trim().length > 0;

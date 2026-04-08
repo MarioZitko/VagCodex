@@ -5,9 +5,11 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import type { Href } from 'expo-router';
 import { useState } from 'react';
 import { useDecodeStore } from '@/store/decodeStore';
 import { PRCodeChip } from '@/components/PRCodeChip';
@@ -16,9 +18,10 @@ import { decodePRCodes } from '@/services/decoder';
 import { extractPRCodesFromText } from '@/utils/prCodeParser';
 
 export default function ConfirmScreen() {
-  const { pendingCodes, setPendingCodes, setDecodeResult, isDecoding, setIsDecoding } =
+  const { pendingCodes, setPendingCodes, setDecodeResult, isDecoding, setIsDecoding, capturedImageUri } =
     useDecodeStore();
   const [addInput, setAddInput] = useState('');
+  const [decodeError, setDecodeError] = useState<string | null>(null);
 
   const removeCode = (code: string) => {
     setPendingCodes(pendingCodes.filter((c) => c !== code));
@@ -32,13 +35,15 @@ export default function ConfirmScreen() {
   };
 
   const handleDecode = async () => {
+    setDecodeError(null);
     setIsDecoding(true);
     try {
       const db = await loadDatabase();
       const result = decodePRCodes(pendingCodes, db);
       setDecodeResult(result);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      router.push('/decode/results' as any);
+      router.push('/decode/results' as Href);
+    } catch {
+      setDecodeError('Failed to load database — please try again.');
     } finally {
       setIsDecoding(false);
     }
@@ -64,6 +69,22 @@ export default function ConfirmScreen() {
         contentContainerStyle={{ padding: 16 }}
         keyboardShouldPersistTaps="handled"
       >
+        {/* Captured image preview */}
+        {capturedImageUri && (
+          <View className="bg-white rounded-2xl border border-gray-100 overflow-hidden mb-3">
+            <Image
+              source={{ uri: capturedImageUri }}
+              style={{ width: '100%', height: 160 }}
+              resizeMode="cover"
+            />
+            <View className="px-4 py-2.5 bg-blue-50 border-t border-blue-100">
+              <Text className="text-blue-700 text-xs text-center">
+                Photo captured — add PR codes manually below. Auto-detection coming in Phase 3.
+              </Text>
+            </View>
+          </View>
+        )}
+
         {/* Code chips */}
         <View className="bg-white rounded-2xl p-4 border border-gray-100">
           <Text className="text-sm font-semibold text-gray-700 mb-3">
@@ -106,6 +127,13 @@ export default function ConfirmScreen() {
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* Error message */}
+        {decodeError && (
+          <View className="bg-red-50 border border-red-200 rounded-2xl p-4 mt-3">
+            <Text className="text-red-700 text-sm text-center">{decodeError}</Text>
+          </View>
+        )}
 
         {/* Decode button */}
         <TouchableOpacity

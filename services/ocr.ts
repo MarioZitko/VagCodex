@@ -1,12 +1,20 @@
 /**
- * OCR service
+ * OCR service — Phase 3
  *
- * Will use @react-native-ml-kit/text-recognition (add back to package.json when implementing).
- * Requires a custom dev build — NOT compatible with Expo Go.
+ * Requires @react-native-ml-kit/text-recognition (custom dev build, NOT Expo Go).
+ * Web is explicitly unsupported — gate all call sites with Platform.OS !== 'web'.
  */
 
-import type { OcrResult } from "@/types";
+import { Platform } from 'react-native';
 
-export async function recognizeText(imageUri: string): Promise<OcrResult> {
-  throw new Error("Not implemented");
+export async function extractPRCodesFromImage(imageUri: string): Promise<string[]> {
+  if (Platform.OS === 'web') {
+    throw new Error('OCR is not supported on web');
+  }
+
+  // TODO Phase 3: install @react-native-ml-kit/text-recognition, then:
+  // const result = await TextRecognition.recognize(imageUri);
+  // return extractPRCodesFromText(result.text);
+  void imageUri;
+  throw new Error('OCR not yet implemented — coming in Phase 3');
 }
