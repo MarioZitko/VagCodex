@@ -12,12 +12,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import type { Href } from 'expo-router';
 import { useState, useEffect, useRef } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import { useDecodeStore } from '@/store/decodeStore';
 import { PRCodeChip } from '@/components/PRCodeChip';
 import { loadDatabase } from '@/services/database';
 import { decodePRCodes } from '@/services/decoder';
 import { extractPRCodesFromText } from '@/utils/prCodeParser';
 import { extractPRCodesFromImage } from '@/services/ocr';
+import { colors } from '@/utils/theme';
 
 export default function ConfirmScreen() {
   const {
@@ -91,13 +93,25 @@ export default function ConfirmScreen() {
   const canDecode = pendingCodes.length > 0 && !isDecoding && !isOcrProcessing;
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-background">
       {/* Header */}
-      <View className="flex-row items-center px-4 py-3 bg-white border-b border-gray-100">
-        <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
-          <Text className="text-blue-600 text-base">← Back</Text>
+      <View
+        className="flex-row items-center bg-surface"
+        style={{
+          paddingHorizontal: 20,
+          paddingVertical: 14,
+          borderBottomWidth: 1,
+          borderBottomColor: colors.border,
+        }}
+      >
+        <TouchableOpacity onPress={() => router.back()} hitSlop={8} className="flex-row items-center gap-1">
+          <Ionicons name="chevron-back" size={18} color={colors.accent} />
+          <Text style={{ color: colors.accent, fontSize: 15 }}>Back</Text>
         </TouchableOpacity>
-        <Text className="flex-1 text-center font-semibold text-gray-900">
+        <Text
+          className="flex-1 text-center"
+          style={{ fontWeight: '600', color: colors.textPrimary, fontSize: 16 }}
+        >
           Review Codes
         </Text>
         <View style={{ width: 60 }} />
@@ -105,25 +119,43 @@ export default function ConfirmScreen() {
 
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ padding: 16 }}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 32 }}
         keyboardShouldPersistTaps="handled"
       >
+        <View style={{ height: 20 }} />
+
+        {/* Subtitle */}
+        <Text style={{ fontSize: 15, color: colors.textSecondary, marginBottom: 20 }}>
+          Review the codes detected. Remove any false positives before decoding.
+        </Text>
+
         {/* Captured image preview */}
         {capturedImageUri && (
-          <View className="bg-white rounded-2xl border border-gray-100 overflow-hidden mb-3">
+          <View
+            className="bg-surface rounded-xl overflow-hidden"
+            style={{ borderWidth: 1, borderColor: colors.border, marginBottom: 16 }}
+          >
             <Image
               source={{ uri: capturedImageUri }}
               style={{ width: '100%', height: 160 }}
               resizeMode="cover"
             />
-            <View className="px-4 py-2.5 bg-blue-50 border-t border-blue-100">
+            <View
+              style={{
+                paddingHorizontal: 16,
+                paddingVertical: 10,
+                backgroundColor: colors.accentLight,
+                borderTopWidth: 1,
+                borderTopColor: colors.border,
+              }}
+            >
               {isOcrProcessing ? (
                 <View className="flex-row items-center justify-center gap-2">
-                  <ActivityIndicator size="small" color="#2563EB" />
-                  <Text className="text-blue-700 text-xs">Scanning for PR codes...</Text>
+                  <ActivityIndicator size="small" color={colors.accent} />
+                  <Text style={{ color: colors.accent, fontSize: 12 }}>Scanning for PR codes...</Text>
                 </View>
               ) : (
-                <Text className="text-blue-700 text-xs text-center">
+                <Text style={{ color: colors.accent, fontSize: 12, textAlign: 'center' }}>
                   {pendingCodes.length > 0
                     ? `${pendingCodes.length} code${pendingCodes.length !== 1 ? 's' : ''} detected — review and remove any false positives`
                     : 'No codes detected — add them manually below'}
@@ -135,30 +167,54 @@ export default function ConfirmScreen() {
 
         {/* OCR error */}
         {ocrError && (
-          <View className="bg-orange-50 border border-orange-200 rounded-2xl p-4 mb-3">
-            <Text className="text-orange-700 text-sm text-center">{ocrError}</Text>
+          <View
+            className="rounded-xl p-4"
+            style={{
+              backgroundColor: '#FFF8F7',
+              borderWidth: 1,
+              borderColor: '#F5C6C2',
+              marginBottom: 16,
+            }}
+          >
+            <Text style={{ color: colors.danger, fontSize: 13, textAlign: 'center' }}>
+              {ocrError}
+            </Text>
           </View>
         )}
 
         {/* Code chips */}
-        <View className="bg-white rounded-2xl p-4 border border-gray-100">
-          <Text className="text-sm font-semibold text-gray-700 mb-3">
+        <View
+          className="bg-surface rounded-xl p-4"
+          style={{ borderWidth: 1, borderColor: colors.border }}
+        >
+          <Text
+            style={{
+              fontSize: 12,
+              fontWeight: '500',
+              color: colors.textMuted,
+              textTransform: 'uppercase',
+              letterSpacing: 0.8,
+              marginBottom: 12,
+            }}
+          >
             {isOcrProcessing
               ? 'Scanning...'
               : `${pendingCodes.length} code${pendingCodes.length !== 1 ? 's' : ''} to decode`}
           </Text>
 
           {isOcrProcessing ? (
-            <View className="items-center py-6">
-              <ActivityIndicator size="large" color="#2563EB" />
-              <Text className="text-gray-400 text-sm mt-3">Reading sticker...</Text>
+            <View className="items-center" style={{ paddingVertical: 24 }}>
+              <ActivityIndicator size="large" color={colors.accent} />
+              <Text style={{ color: colors.textMuted, fontSize: 13, marginTop: 12 }}>
+                Reading sticker...
+              </Text>
             </View>
           ) : pendingCodes.length === 0 ? (
-            <Text className="text-gray-400 text-center py-4 text-sm">
+            <Text style={{ color: colors.textMuted, textAlign: 'center', paddingVertical: 16, fontSize: 14 }}>
               No codes yet — add some below
             </Text>
           ) : (
-            <View className="flex-row flex-wrap">
+            <View className="flex-row flex-wrap" style={{ gap: 0 }}>
               {pendingCodes.map((code) => (
                 <PRCodeChip key={code} code={code} onDelete={() => removeCode(code)} />
               ))}
@@ -167,13 +223,37 @@ export default function ConfirmScreen() {
         </View>
 
         {/* Add more */}
-        <View className="bg-white rounded-2xl p-4 mt-3 border border-gray-100">
-          <Text className="text-sm font-semibold text-gray-700 mb-2">Add more</Text>
+        <View
+          className="bg-surface rounded-xl p-4"
+          style={{ borderWidth: 1, borderColor: colors.border, marginTop: 12 }}
+        >
+          <Text
+            style={{
+              fontSize: 12,
+              fontWeight: '500',
+              color: colors.textMuted,
+              textTransform: 'uppercase',
+              letterSpacing: 0.8,
+              marginBottom: 10,
+            }}
+          >
+            Add codes
+          </Text>
           <View className="flex-row gap-2">
             <TextInput
-              className="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-gray-900 text-base"
+              className="flex-1"
+              style={{
+                borderWidth: 1,
+                borderColor: colors.border,
+                borderRadius: 12,
+                paddingHorizontal: 12,
+                height: 48,
+                fontSize: 15,
+                color: colors.textPrimary,
+                backgroundColor: colors.background,
+              }}
               placeholder="e.g. 5G0 3S2"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={colors.textMuted}
               value={addInput}
               onChangeText={setAddInput}
               autoCapitalize="characters"
@@ -182,33 +262,49 @@ export default function ConfirmScreen() {
               returnKeyType="done"
             />
             <TouchableOpacity
-              className="bg-blue-50 border border-blue-200 px-4 rounded-xl items-center justify-center"
+              className="bg-accent-light rounded-xl items-center justify-center"
+              style={{
+                paddingHorizontal: 16,
+                height: 48,
+                borderWidth: 1,
+                borderColor: colors.accent,
+              }}
               onPress={addCodes}
             >
-              <Text className="text-blue-600 font-semibold">Add</Text>
+              <Text style={{ color: colors.accent, fontWeight: '600', fontSize: 14 }}>Add</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Decode error */}
         {decodeError && (
-          <View className="bg-red-50 border border-red-200 rounded-2xl p-4 mt-3">
-            <Text className="text-red-700 text-sm text-center">{decodeError}</Text>
+          <View
+            className="rounded-xl p-4"
+            style={{
+              backgroundColor: '#FFF8F7',
+              borderWidth: 1,
+              borderColor: '#F5C6C2',
+              marginTop: 12,
+            }}
+          >
+            <Text style={{ color: colors.danger, fontSize: 13, textAlign: 'center' }}>
+              {decodeError}
+            </Text>
           </View>
         )}
 
         {/* Decode button */}
         <TouchableOpacity
-          className="bg-blue-600 rounded-2xl p-4 mt-6 items-center"
+          className="bg-accent rounded-xl items-center justify-center"
+          style={{ height: 56, marginTop: 24, opacity: canDecode ? 1 : 0.35 }}
           onPress={handleDecode}
           disabled={!canDecode}
           activeOpacity={0.8}
-          style={{ opacity: canDecode ? 1 : 0.4 }}
         >
           {isDecoding ? (
-            <ActivityIndicator color="white" />
+            <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Text className="text-white font-semibold text-base">Decode</Text>
+            <Text style={{ color: '#FFFFFF', fontWeight: '600', fontSize: 16 }}>Decode</Text>
           )}
         </TouchableOpacity>
       </ScrollView>

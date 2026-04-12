@@ -37,7 +37,8 @@ vagcodex/
 │   ├── PRCodeChip.tsx          # Deletable chip
 │   ├── EquipmentCard.tsx       # Single decoded item
 │   ├── CategorySection.tsx     # Collapsible category group
-│   └── ScanButton.tsx          # Photo capture trigger (mobile only)
+│   ├── ScanButton.tsx          # Photo capture trigger (mobile only)
+│   └── AffiliateCard.tsx       # Affiliate partner card (accent left border)
 ├── services/
 │   ├── ocr.ts                  # ML Kit wrapper (Phase 3 stub)
 │   ├── decoder.ts              # PR code lookup
@@ -51,7 +52,8 @@ vagcodex/
 ├── types/index.ts
 ├── utils/
 │   ├── prCodeParser.ts
-│   └── platform.ts
+│   ├── platform.ts
+│   └── theme.ts                # Design system color constants (source of truth)
 ├── global.css                  # NativeWind v4 entry (@tailwind directives)
 ├── tailwind.config.js
 └── postcss.config.js
@@ -104,6 +106,50 @@ export const PR_CODE_PATTERN = /\b[A-Z0-9]{3}\b/g
 export function extractPRCodesFromText(text: string): string[]
 export function filterValidPRCodes(codes: string[], knownCodes: Set<string>): { valid: string[]; unrecognized: string[] }
 ```
+
+## Design System
+
+All visual tokens live in `utils/theme.ts`. Import `colors` from there — never hardcode hex values inline.
+
+| Token | Value | Usage |
+|---|---|---|
+| `background` | `#F7F7F8` | Screen backgrounds |
+| `surface` | `#FFFFFF` | Cards, sheets |
+| `border` | `#E8E8EA` | Subtle dividers, card borders |
+| `textPrimary` | `#111111` | Headings, body text |
+| `textSecondary` | `#6B6B6B` | Secondary labels |
+| `textMuted` | `#AAAAAA` | Captions, hints, placeholders |
+| `accent` | `#1C3557` | CTAs, active states, links |
+| `accentLight` | `#EDF2F8` | Chip/badge backgrounds |
+| `danger` | `#C0392B` | Destructive actions only |
+| `success` | `#2D6A4F` | Matched/found states |
+
+Tailwind custom colors (defined in `tailwind.config.js` → `theme.extend.colors`):
+- `bg-background`, `bg-surface`, `border-divider`, `text-primary`, `text-secondary`, `text-muted`
+- `bg-accent`, `text-accent`, `bg-accent-light`, `text-accent-light`, `text-danger`, `text-success`
+
+**Typography rules:**
+- Heading: 24px, `fontWeight: '700'`, `textPrimary`
+- Subheading: 16–18px, `fontWeight: '600'`, `textPrimary`
+- Body: 15px, `fontWeight: '400'`, `textPrimary`
+- Caption/label: 12px, `fontWeight: '500'`, `textMuted`, `textTransform: 'uppercase'`, `letterSpacing: 0.8`
+
+**Layout rules:**
+- Screen horizontal padding: 20px
+- Card padding: 16px
+- Section spacing: 24px between sections
+- Card border radius: 12px (`rounded-xl`)
+- Chip/badge border radius: 6px (`rounded-md`)
+- Cards: `bg-surface`, `borderWidth: 1`, `borderColor: colors.border` — no shadows
+- CTA buttons: `bg-accent`, `height: 56`, `rounded-xl`, white text `fontWeight: '600'`
+- Tab bar: white bg, accent active, textMuted inactive
+
+**Component conventions:**
+- `AffiliateCard`: surface card with 3px left border in accent color, full-width CTA button
+- `PRCodeChip`: accentLight bg, accent text, 6px radius, 32px height
+- `EquipmentCard`: description left, code badge right (accentLight bg)
+- `CategorySection`: uppercase caption header, chevron via Ionicons, accent-light count badge
+- `ScanButton`: two side-by-side buttons — accent fill (camera) + accent-light/bordered (library)
 
 ## NativeWind v4 Setup (what is actually installed)
 ```css
@@ -165,3 +211,6 @@ Confirm Screen → [Decode] → Results Screen → [Save] → Garage
 - Show OCR/camera UI on web
 - Store sensitive user data
 - Add ads or paywalls
+- Hardcode hex color values — always use `colors` from `utils/theme.ts`
+- Use gradient backgrounds, heavy drop shadows, or pure white screen backgrounds
+- Use custom fonts — system font only

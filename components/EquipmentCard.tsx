@@ -7,11 +7,11 @@ interface Props {
 
 export function EquipmentCard({ item }: Props) {
   return (
-    <View className="py-3 flex-row items-start border-b border-gray-100 last:border-0">
-      <View className="bg-gray-100 rounded px-1.5 py-0.5 mr-3 mt-0.5">
-        <Text className="text-gray-500 font-mono text-xs font-bold">{item.code}</Text>
+    <View className="py-3 flex-row items-start border-b border-divider">
+      <Text className="flex-1 text-primary text-sm leading-snug">{item.description}</Text>
+      <View className="bg-accent-light rounded-md px-1.5 py-0.5 ml-3 mt-0.5">
+        <Text className="text-accent font-mono text-xs font-semibold">{item.code}</Text>
       </View>
-      <Text className="flex-1 text-gray-800 text-sm leading-snug">{item.description}</Text>
     </View>
   );
 }

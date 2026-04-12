@@ -1,5 +1,7 @@
 import { View, Text, TouchableOpacity, Platform } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useImagePicker } from '@/hooks/useImagePicker';
+import { colors } from '@/utils/theme';
 
 export function ScanButton() {
   const { captureFromCamera, pickFromLibrary } = useImagePicker();
@@ -9,23 +11,23 @@ export function ScanButton() {
   return (
     <View className="flex-row gap-3">
       <TouchableOpacity
-        className="flex-1 bg-gray-900 rounded-2xl p-4 items-center"
+        className="flex-1 bg-accent rounded-xl flex-row items-center justify-center gap-2"
+        style={{ height: 56 }}
         onPress={captureFromCamera}
         activeOpacity={0.8}
       >
-        <Text className="text-2xl mb-1">📷</Text>
+        <Ionicons name="camera-outline" size={20} color="#FFFFFF" />
         <Text className="text-white font-semibold text-sm">Scan Sticker</Text>
-        <Text className="text-gray-400 text-xs mt-0.5">Camera</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        className="flex-1 bg-gray-700 rounded-2xl p-4 items-center"
+        className="flex-1 bg-accent-light rounded-xl flex-row items-center justify-center gap-2"
+        style={{ height: 56, borderWidth: 1, borderColor: colors.accent }}
         onPress={pickFromLibrary}
         activeOpacity={0.8}
       >
-        <Text className="text-2xl mb-1">🖼️</Text>
-        <Text className="text-white font-semibold text-sm">From Library</Text>
-        <Text className="text-gray-400 text-xs mt-0.5">Photo</Text>
+        <Ionicons name="image-outline" size={20} color={colors.accent} />
+        <Text className="text-accent font-semibold text-sm">From Library</Text>
       </TouchableOpacity>
     </View>
   );

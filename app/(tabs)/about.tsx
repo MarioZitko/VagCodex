@@ -1,63 +1,110 @@
 import { View, Text, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AffiliateCard } from '@/components/AffiliateCard';
+import { colors } from '@/utils/theme';
+
+const BRANDS = ['VW', 'Audi', 'Škoda', 'Seat', 'Cupra', 'Porsche'];
 
 export default function AboutScreen() {
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-background">
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 32 }}
       >
-        <View className="pt-4 pb-6">
-          <Text className="text-3xl font-bold text-gray-900">About</Text>
-        </View>
-
-        <View className="bg-white rounded-2xl p-4 mb-3 border border-gray-100">
-          <Text className="font-semibold text-gray-900 text-base mb-2">VagCodex</Text>
-          <Text className="text-gray-600 text-sm leading-relaxed">
-            Free tool to decode VAG vehicle factory equipment from PR codes found on
-            the sticker inside your boot lid. Supports VW, Audi, Škoda, Seat, Cupra
-            and Porsche. Everything runs on-device — no account or internet required.
+        {/* Header */}
+        <View style={{ paddingTop: 24, paddingBottom: 28 }}>
+          <Text style={{ fontSize: 24, fontWeight: '700', color: colors.textPrimary }}>
+            About
           </Text>
         </View>
 
-        <Text className="text-xs font-semibold text-gray-400 uppercase tracking-wide px-1 mb-2 mt-2">
-          Our Partners
+        {/* App description */}
+        <View
+          className="bg-surface rounded-xl p-4"
+          style={{ borderWidth: 1, borderColor: colors.border }}
+        >
+          <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 }}>
+            VagCodex
+          </Text>
+          <Text style={{ fontSize: 15, color: colors.textSecondary, lineHeight: 22 }}>
+            Free tool to decode VAG vehicle factory equipment from PR codes found on the sticker
+            inside your boot lid. Everything runs on-device — no account or internet required.
+          </Text>
+
+          {/* Brand chips */}
+          <View className="flex-row flex-wrap" style={{ marginTop: 16, gap: 6 }}>
+            {BRANDS.map((brand) => (
+              <View
+                key={brand}
+                className="bg-accent-light rounded-md px-3 py-1"
+              >
+                <Text style={{ fontSize: 12, fontWeight: '500', color: colors.accent }}>
+                  {brand}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Partners section label */}
+        <Text
+          style={{
+            fontSize: 12,
+            fontWeight: '500',
+            color: colors.textMuted,
+            textTransform: 'uppercase',
+            letterSpacing: 0.8,
+            marginTop: 28,
+            marginBottom: 12,
+          }}
+        >
+          Partners
         </Text>
 
-        <TouchableOpacity
-          className="bg-white rounded-2xl p-4 mb-3 border border-gray-100 active:opacity-70"
-          onPress={() => Linking.openURL('https://www.carvertical.com')}
-        >
-          <View className="flex-row items-center justify-between">
-            <View>
-              <Text className="font-semibold text-gray-900">CarVertical</Text>
-              <Text className="text-gray-500 text-sm mt-0.5">
-                Full vehicle history reports
-              </Text>
-            </View>
-            <Text className="text-gray-400">→</Text>
-          </View>
-        </TouchableOpacity>
+        {/* CarVertical */}
+        <AffiliateCard
+          title="CarVertical"
+          description="Full vehicle history reports — accidents, mileage, ownership records."
+          ctaLabel="Check vehicle history"
+          url="https://www.carvertical.com"
+        />
 
-        <TouchableOpacity
-          className="bg-white rounded-2xl p-4 border border-gray-100 active:opacity-70"
-          onPress={() => Linking.openURL('https://www.autodoc.co.uk')}
-        >
-          <View className="flex-row items-center justify-between">
-            <View>
-              <Text className="font-semibold text-gray-900">Autodoc</Text>
-              <Text className="text-gray-500 text-sm mt-0.5">
-                Find parts for your VAG vehicle
-              </Text>
-            </View>
-            <Text className="text-gray-400">→</Text>
-          </View>
-        </TouchableOpacity>
+        <View style={{ height: 12 }} />
 
-        <Text className="text-center text-gray-400 text-xs mt-8">
-          VagCodex is not affiliated with Volkswagen AG
-        </Text>
+        {/* Autodoc */}
+        <AffiliateCard
+          title="Autodoc"
+          description="Find parts for your VAG vehicle — extensive catalogue with fast delivery."
+          ctaLabel="Browse parts catalogue"
+          url="https://www.autodoc.co.uk"
+        />
+
+        {/* Links */}
+        <View
+          style={{
+            marginTop: 28,
+            paddingTop: 20,
+            borderTopWidth: 1,
+            borderTopColor: colors.border,
+          }}
+        >
+          <TouchableOpacity onPress={() => Linking.openURL('https://www.carvertical.com')}>
+            <Text
+              style={{
+                fontSize: 14,
+                color: colors.accent,
+                textDecorationLine: 'underline',
+                marginBottom: 10,
+              }}
+            >
+              Privacy Policy
+            </Text>
+          </TouchableOpacity>
+          <Text style={{ fontSize: 12, color: colors.textMuted }}>
+            VagCodex is not affiliated with Volkswagen AG or any VAG brand.
+          </Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

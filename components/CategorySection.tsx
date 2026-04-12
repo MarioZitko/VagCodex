@@ -1,7 +1,9 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import type { PRCode } from '@/types';
 import { EquipmentCard } from './EquipmentCard';
+import { colors } from '@/utils/theme';
 
 const CATEGORY_LABELS: Record<string, string> = {
   engine: 'Engine',
@@ -26,20 +28,27 @@ export function CategorySection({ category, codes }: Props) {
   const [expanded, setExpanded] = useState(true);
 
   return (
-    <View className="bg-white rounded-2xl mb-3 border border-gray-100 overflow-hidden">
+    <View className="bg-surface rounded-xl mb-3 border border-divider overflow-hidden">
       <TouchableOpacity
         className="flex-row items-center justify-between px-4 py-3"
         onPress={() => setExpanded(!expanded)}
         activeOpacity={0.7}
       >
-        <Text className="font-semibold text-gray-900">
+        <Text
+          className="font-semibold text-xs uppercase tracking-wider"
+          style={{ color: colors.textSecondary }}
+        >
           {CATEGORY_LABELS[category] ?? category}
         </Text>
         <View className="flex-row items-center gap-2">
-          <View className="bg-gray-100 rounded-full px-2 py-0.5">
-            <Text className="text-gray-500 text-xs font-medium">{codes.length}</Text>
+          <View className="bg-accent-light rounded-md px-2 py-0.5">
+            <Text className="text-accent text-xs font-medium">{codes.length}</Text>
           </View>
-          <Text className="text-gray-400 text-xs">{expanded ? '▲' : '▼'}</Text>
+          <Ionicons
+            name={expanded ? 'chevron-up' : 'chevron-down'}
+            size={14}
+            color={colors.textMuted}
+          />
         </View>
       </TouchableOpacity>
 
