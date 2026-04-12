@@ -6,22 +6,61 @@ import {
   ScrollView,
   ActivityIndicator,
   Image,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import type { Href } from 'expo-router';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDecodeStore } from '@/store/decodeStore';
 import { PRCodeChip } from '@/components/PRCodeChip';
 import { loadDatabase } from '@/services/database';
 import { decodePRCodes } from '@/services/decoder';
 import { extractPRCodesFromText } from '@/utils/prCodeParser';
+import { extractPRCodesFromImage } from '@/services/ocr';
 
 export default function ConfirmScreen() {
-  const { pendingCodes, setPendingCodes, setDecodeResult, isDecoding, setIsDecoding, capturedImageUri } =
-    useDecodeStore();
+  const {
+    pendingCodes,
+    setPendingCodes,
+    setDecodeResult,
+    isDecoding,
+    setIsDecoding,
+    isOcrProcessing,
+    setIsOcrProcessing,
+    capturedImageUri,
+  } = useDecodeStore();
+
   const [addInput, setAddInput] = useState('');
   const [decodeError, setDecodeError] = useState<string | null>(null);
+  const [ocrError, setOcrError] = useState<string | null>(null);
+  const ocrRanRef = useRef(false);
+
+  // Run OCR once when screen mounts with a captured image
+  useEffect(() => {
+    if (!capturedImageUri || Platform.OS === 'web' || ocrRanRef.current) return;
+    ocrRanRef.current = true;
+
+    let cancelled = false;
+    setIsOcrProcessing(true);
+    setOcrError(null);
+
+    extractPRCodesFromImage(capturedImageUri)
+      .then((codes) => {
+        if (cancelled) return;
+        setPendingCodes(codes);
+        setIsOcrProcessing(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setOcrError('Could not read codes from image — add them manually below.');
+        setIsOcrProcessing(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [capturedImageUri, setIsOcrProcessing, setPendingCodes]);
 
   const removeCode = (code: string) => {
     setPendingCodes(pendingCodes.filter((c) => c !== code));
@@ -49,7 +88,7 @@ export default function ConfirmScreen() {
     }
   };
 
-  const canDecode = pendingCodes.length > 0 && !isDecoding;
+  const canDecode = pendingCodes.length > 0 && !isDecoding && !isOcrProcessing;
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
@@ -78,20 +117,43 @@ export default function ConfirmScreen() {
               resizeMode="cover"
             />
             <View className="px-4 py-2.5 bg-blue-50 border-t border-blue-100">
-              <Text className="text-blue-700 text-xs text-center">
-                Photo captured — add PR codes manually below. Auto-detection coming in Phase 3.
-              </Text>
+              {isOcrProcessing ? (
+                <View className="flex-row items-center justify-center gap-2">
+                  <ActivityIndicator size="small" color="#2563EB" />
+                  <Text className="text-blue-700 text-xs">Scanning for PR codes...</Text>
+                </View>
+              ) : (
+                <Text className="text-blue-700 text-xs text-center">
+                  {pendingCodes.length > 0
+                    ? `${pendingCodes.length} code${pendingCodes.length !== 1 ? 's' : ''} detected — review and remove any false positives`
+                    : 'No codes detected — add them manually below'}
+                </Text>
+              )}
             </View>
+          </View>
+        )}
+
+        {/* OCR error */}
+        {ocrError && (
+          <View className="bg-orange-50 border border-orange-200 rounded-2xl p-4 mb-3">
+            <Text className="text-orange-700 text-sm text-center">{ocrError}</Text>
           </View>
         )}
 
         {/* Code chips */}
         <View className="bg-white rounded-2xl p-4 border border-gray-100">
           <Text className="text-sm font-semibold text-gray-700 mb-3">
-            {pendingCodes.length} code{pendingCodes.length !== 1 ? 's' : ''} to decode
+            {isOcrProcessing
+              ? 'Scanning...'
+              : `${pendingCodes.length} code${pendingCodes.length !== 1 ? 's' : ''} to decode`}
           </Text>
 
-          {pendingCodes.length === 0 ? (
+          {isOcrProcessing ? (
+            <View className="items-center py-6">
+              <ActivityIndicator size="large" color="#2563EB" />
+              <Text className="text-gray-400 text-sm mt-3">Reading sticker...</Text>
+            </View>
+          ) : pendingCodes.length === 0 ? (
             <Text className="text-gray-400 text-center py-4 text-sm">
               No codes yet — add some below
             </Text>
@@ -128,7 +190,7 @@ export default function ConfirmScreen() {
           </View>
         </View>
 
-        {/* Error message */}
+        {/* Decode error */}
         {decodeError && (
           <View className="bg-red-50 border border-red-200 rounded-2xl p-4 mt-3">
             <Text className="text-red-700 text-sm text-center">{decodeError}</Text>

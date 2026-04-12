@@ -9,7 +9,9 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-ml-kit/text-recognition": "^2.0.0",
     "expo": "^55.0.11",
+    "expo-build-properties": "~55.0.13",
     "expo-constants": "~55.0.11",
     "expo-dev-client": "~55.0.22",
     "expo-image-picker": "~55.0.16",

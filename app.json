@@ -1,49 +1,57 @@
 {
-  "expo": {
-    "name": "VagCodex",
-    "slug": "vagcodex",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "scheme": "vagcodex",
-    "newArchEnabled": true,
-    "platforms": ["ios", "android"],
-    "icon": "./assets/images/icon.png",
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": false,
-      "bundleIdentifier": "com.vagcodex.app",
-      "infoPlist": {
-        "NSCameraUsageDescription": "VagCodex needs camera access to capture images for text recognition.",
-        "NSPhotoLibraryUsageDescription": "VagCodex needs photo library access to select images for text recognition."
-      }
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.vagcodex.app",
-      "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.READ_EXTERNAL_STORAGE"
-      ]
-    },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "VagCodex needs photo library access to select images.",
-          "cameraPermission": "VagCodex needs camera access to capture images."
-        }
-      ]
-    ],
-    "experiments": {
-      "typedRoutes": true
-    }
-  }
+	"expo": {
+		"name": "VagCodex",
+		"slug": "vagcodex",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"scheme": "vagcodex",
+		"newArchEnabled": true,
+		"platforms": ["ios", "android"],
+		"icon": "./assets/images/icon.png",
+		"splash": {
+			"image": "./assets/images/splash.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#ffffff"
+		},
+		"ios": {
+			"supportsTablet": false,
+			"bundleIdentifier": "com.vagcodex.app",
+			"infoPlist": {
+				"NSCameraUsageDescription": "VagCodex needs camera access to capture images for text recognition.",
+				"NSPhotoLibraryUsageDescription": "VagCodex needs photo library access to select images for text recognition."
+			}
+		},
+		"android": {
+			"adaptiveIcon": {
+				"foregroundImage": "./assets/images/adaptive-icon.png",
+				"backgroundColor": "#ffffff"
+			},
+			"package": "com.vagcodex.app",
+			"permissions": [
+				"android.permission.CAMERA",
+				"android.permission.READ_EXTERNAL_STORAGE"
+			]
+		},
+		"plugins": [
+			"expo-router",
+			[
+				"expo-image-picker",
+				{
+					"photosPermission": "VagCodex needs photo library access to select images.",
+					"cameraPermission": "VagCodex needs camera access to capture images."
+				}
+			],
+			[
+				"expo-build-properties",
+				{
+					"ios": {
+						"deploymentTarget": "15.5"
+					}
+				}
+			]
+		],
+		"experiments": {
+			"typedRoutes": true
+		}
+	}
 }
